@@ -1,0 +1,35 @@
+<%
+'Força a declaração de todas as variáveis
+Option Explicit
+'Não deixa informações no Cache
+Response.Expires = 0
+'Declaração das variáveis
+Dim objConn, objRs, strQuery, strConnection, nome, telefone, email, comentario
+'Atrubuição dos valores as respectivas variáveis
+nome = Request.Form("nome")
+telefone = Request.Form("telefone")
+email = Request.Form("email")
+comentario = Request.Form("comentario")
+'Cria o objeto RecordSet e atribui a variável 
+Set objConn =  Server.CreateObject("ADODB.Connection")
+'Abre a conexão com o banco de dados utilizando o Drive {Microsoft Access...
+'(para utilizar outro, ex: Paradox é só substituir o Drive pelo do Paradox)
+'(*.mdb) indica que o arquivo utiliza extensão mdb
+objConn.Open "DBQ=" & Server.MapPath("contato.mdb") & ";Driver={Microsoft Access Driver (*.mdb)}","username","password"
+'Insere os dados na tabela aberta
+strQuery = "INSERT INTO contato (nome,telefone,email,comentario) VALUES ('"&nome&"','"&telefone&"','"&email&"','"&comentario&"')"
+'Caso ocorra um erro esta função de erro será chamada
+On error Resume Next
+'Executa a inserção no Banco de Dados 
+Set ObjRs = objConn.Execute(strQuery)
+'Fecha o Objeto de Conexão
+objConn.close
+'"APAGA" qualquer instancia que possa ter no objeto objRs e objConn
+Set objRs = Nothing
+Set objConn = Nothing
+'Caso a função On Error Resume Next não tenha sido chamada o objeto err será = a 0
+if err = 0 Then
+	'Redireciona o usuário caso não tenha ocorrido erro na transação
+	response.redirect "sucesso.asp"
+end if
+%>
